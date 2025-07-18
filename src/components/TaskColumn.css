@@ -1,0 +1,29 @@
+.progress{
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.progress--status {
+    margin: 40px 20px 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    min-width: 300px;
+}
+
+.progress--status--header {
+    font-weight: 500;
+}
+
+.divider{
+    border: none;
+  height: 1.25px;
+  /* Set the hr color */
+  color: #c9c9c9;  /* old IE */
+  background-color: #c9c9c9;  /* Modern Browsers */
+}
+
+.task {
+    flex-direction: column;
+}
