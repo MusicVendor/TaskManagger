@@ -1,8 +1,8 @@
 import React from 'react'
-import './Main.css'
+import './MainContent.css'
 import TaskColumn from './TaskColumn.jsx'
 
-function Main(props){
+function MainContent(props){
     return (
     <div className='main'>
         <div className="main--header">
@@ -21,4 +21,4 @@ function Main(props){
     )
 }
 
-export default Main
+export default MainContent

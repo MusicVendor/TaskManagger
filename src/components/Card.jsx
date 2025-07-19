@@ -1,15 +1,15 @@
 import React from 'react'
 import './Card.css'
-function Card(){
+function Card(props){
     return(
         <div className='card'>
             <div className="card--cotent">
                 <div className="card--header">
-                    <p className='card--type'>Design</p>
+                    <p className='card--type'>{props.type}</p>
                 </div>
-                <h1 className='card--title'>User Interface Screens</h1>
-                <p className='card--description'>Design task manager user interface screen</p>
-                <p className="card--deadline">Complete by: <span className='card--deadline--date'>12th July, 2025</span></p>
+                <h1 className='card--title'>{props.title}</h1>
+                <p className='card--description'>{props.description}</p>
+                <p className="card--deadline">Complete by: <span className='card--deadline--date'>{props.date}</span></p>
             </div>
         </ div>
     )

@@ -12,7 +12,11 @@ function TaskColumn(props){
                 <img src={logoAdd} className='progress--status--addLogo' style={{width:'14px', height:'14px'}}/>
             </div>
         <hr className='divider'/>
-        <Card />
+        <Card 
+        type="Design"
+        title="User Interface Screen"
+        description="Design user interface Screen"
+        date="12th July, 2025"/>
         </ div>
     </>
     )
