@@ -6,7 +6,7 @@ function MainContent(props){
     return (
     <div className='main'>
         <div className="main--header">
-            <h1>{props.name}</h1>
+            <h1>{props.title}</h1>
             <ul className='main--options'>
                 <li className='share'>Share</li>
                 <li className='report'>Report</li>

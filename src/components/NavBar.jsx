@@ -6,7 +6,6 @@ import logoSetting from '../assets/logo-setting.png'
 import logoSearch from '../assets/logo-search.png'
 import logoAdd from '../assets/logo-add.png'
 import './NavBar.css'
-import MainContent from './MainContent'
 
 
 
@@ -26,7 +25,7 @@ function NavBar(props) {
         <div className='projects'>
             <div className="projects-header">
                 <h2 className='projects-head'>Projects</h2> 
-                <img src={logoAdd} className='projects-addLogo' style={{height: '14.6px', width: '14.6px'}}/> {/*Need high pixel logo*/}
+                <img src={logoAdd} className='projects-addLogo' style={{height: '14.6px', width: '14.6px'}}/>
                 
             </div>
             {props.category.map((categories) => (
@@ -35,9 +34,8 @@ function NavBar(props) {
                     <ul>
                         <nav>
                             {categories.projects.map((project, index) => (
-                                <NavLink to={`/${project}`} key={index} className={({isActive}) => isActive?"active-link":"link"}>
+                                <NavLink to={`/${project.replace(/\s+/g, '-').toLowerCase()}`} key={index} className={({isActive}) => isActive?"active-link":"link"}>
                                     <li>{project}</li>
-                                    {/* <MainContent name={project}/> */}
                                 </NavLink>
                             ))}
                         </nav>
