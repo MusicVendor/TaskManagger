@@ -34,8 +34,8 @@ function NavBar(props) {
                     <ul>
                         <nav>
                             {categories.projects.map((project, index) => (
-                                <NavLink to={`/${project.replace(/\s+/g, '-').toLowerCase()}`} key={index} className={({isActive}) => isActive?"active-link":"link"}>
-                                    <li>{project}</li>
+                                <NavLink to={`/${project.name.replace(/\s+/g, '-').toLowerCase()}`} key={index} className={({isActive}) => isActive?"active-link":"link"}>
+                                    <li>{project.name}</li>
                                 </NavLink>
                             ))}
                         </nav>

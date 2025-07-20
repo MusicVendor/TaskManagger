@@ -13,9 +13,9 @@ function MainContent(props){
             </ul>
         </div>
         <div className="main--progress">
-            <TaskColumn status="ToDo"/>
-            <TaskColumn status="In Progress"/>
-            <TaskColumn status="Completed"/>
+            <TaskColumn status="To Do" task={props.task.todo}/>
+            <TaskColumn status="In Progress" task={props.task.inprogress}/>
+            <TaskColumn status="Completed" task={props.task.completed}/>
         </div>
         </div>
     )

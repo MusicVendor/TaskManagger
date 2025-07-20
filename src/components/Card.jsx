@@ -5,11 +5,11 @@ function Card(props){
         <div className='card'>
             <div className="card--cotent">
                 <div className="card--header">
-                    <p className='card--type'>{props.type}</p>
+                    <p className='card--type'>{props.tag}</p>
                 </div>
                 <h1 className='card--title'>{props.title}</h1>
                 <p className='card--description'>{props.description}</p>
-                <p className="card--deadline">Complete by: <span className='card--deadline--date'>{props.date}</span></p>
+                <p className="card--deadline">Complete by: <span className='card--deadline--date'>{props.deadline}</span></p>
             </div>
         </ div>
     )
