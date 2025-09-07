@@ -1,0 +1,65 @@
+.background {
+    background-image: url("../assets/login-bg.jpg");
+    height: 100vh;
+    width: 100vw;
+}
+
+.form {
+    width: 45vw;
+    height: 100vh;
+    background-color: rgba(240, 248, 255, 0.186);
+    padding: 5rem 3rem 5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color:  rgb(225, 229, 229);
+}
+
+.form-head{
+    padding-bottom: 2rem;
+}
+
+.login-form-element {
+    width: 25vw;
+    padding-top: 3rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form-element:focus {
+    border-bottom: 2px solid rgb(255, 255, 255); /* change line color on focus */
+}
+
+.element-input {
+    background: none;           /* removes background */
+    border: none;               /* removes box border */
+    border-bottom: 2px solid black;  /* just a line at bottom */
+    padding: 10px;              /* increase height with padding */
+    font-size: 16px;            /* bigger text */
+    outline: none;              /* remove blue outline when clicked */
+    width: 100%;                /* makes input take full width */
+    box-sizing: border-box;     /* prevents overflow */
+    caret-color: aliceblue;
+    color: aliceblue;
+}
+
+.element-button {
+    font-size: 1.3rem;
+    height: 50px;
+    border-radius: 8px;
+    background-color: black;
+    color: aliceblue;
+}
+
+.element-button:hover{
+    background: rgb(48, 47, 47);
+}
+
+.element-button:active{
+    background: darkgray;
+    transform: scale(0.98); /* slight shrink effect */
+}
+
+.element-button:focus{
+    outline: 2px solid rgb(149, 149, 149);
+}

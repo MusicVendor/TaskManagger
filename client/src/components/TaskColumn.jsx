@@ -4,6 +4,7 @@ import logoAdd from '../assets/logo-add.png'
 import Card from './Card.jsx'
 
 function TaskColumn(props){
+
     return (
     <>
         <div className='progress'>
