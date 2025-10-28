@@ -1,32 +1,52 @@
 .main {
-    margin: 20px 20px 0px 40px;
+    margin: 20px 20px 0px 280px; /* Shift right to avoid hiding behind navbar */
     display: flex;
     flex-direction: column;
 }
 
+/* Header */
 .main--header {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    margin-left: 100px;
+    margin-left: 20px; /* Reduced from 100px for better centering */
     font-size: 1.3rem;
     font-weight: 600;
+    color: #222;
 }
 
+/* Options */
 .main--options {
     display: flex;
     list-style: none;
     font-size: 1.1rem;
     font-weight: 500;
     color: #3b3b3b;
+    margin-top: 10px;
+    margin-left: 20px;
+    gap: 30px;
 }
 
-.share{
+.main--options li:hover {
+    color: #3949ab;
+    cursor: pointer;
+}
+
+.share {
     margin-right: 25px;
 }
 
+/* Progress Section */
 .main--progress {
     display: flex;
     justify-content: space-between;
     gap: 25px;
+    margin: 30px 20px;
+}
+
+/* Responsive: Adjust margin for smaller screens */
+@media (max-width: 900px) {
+    .main {
+        margin: 20px;
+    }
 }

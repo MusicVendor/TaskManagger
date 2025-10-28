@@ -1,92 +1,162 @@
-.left-navBar{
-    background-color: #f7f7f7;
-    width: 250px;
-    padding: 0px 20px;
-    height: 90vh;
-    margin-top: 60px;
-    border-radius:0 8px 8px 0;
-    box-shadow: 0 4px 8.6px rgb(0 0 0 / 0.2);
+.left-navBar {
+  width: 260px;
+  height: 100vh;
+  background-color: #fdfeff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 25px 20px;
+  border-right: 1px solid #e0e0e0;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
-.profile{
-    display: flex;
-    align-items: center;
-    padding: 40px 0 20px 0;
+/* ---------- Profile Section ---------- */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .profile-greeting {
-    max-width: 150px;
-    margin-left: 10px;
-    font-weight: 600;
-    font-size: 1.5rem;
+  font-size: 0.95rem;
+  color: #555;
 }
 
+.profile-user {
+  font-weight: 600;
+  color: #3949ab;
+}
+
+/* ---------- Options Section ---------- */
 .options {
-    list-style: none;
-    font-size: 1.35rem;
-    font-weight: 400;
-}
-
-.logo{
-    margin-right: 15px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px 0;
 }
 
 .options li {
-    display: flex;
-    align-items: center;
-    padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.options li:hover {
+  background-color: #e9ebff;
+  color: #3949ab;
+  cursor: pointer;
+}
+
+.logo {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Projects Section ---------- */
+.projects {
+  flex-grow: 1;
 }
 
 .projects-header {
-    display: flex;
-    align-items: center;
-    padding: 40px 0 0 0;
-    font-size: 1.1rem;
-    font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .projects-head {
-    margin-right: 60px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
 }
 
-.projects-category h3{
-    margin-top: 10px;
-    font-size: 1.3rem;
-    font-weight: 700;
+.projects-addLogo {
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.link li {
-    padding: 5px;
-    margin-bottom: 2px;
+.projects-addLogo:hover {
+  transform: scale(1.2);
 }
 
-.link {
-    list-style: none;
-    color: hsl(0, 0%, 0%);
-    text-decoration: none;
-    font-size: 1rem;
+/* Project List */
+.projects-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
 }
 
-.link li:visited{
-    list-style: none;
-    text-decoration: none;
+.projects-title {
+  font-size: 0.95rem;
+  color: #444;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-.link li:hover {
-    background-color: #c7c7c7;
-    border-radius: 6px;
+.projects-title:hover {
+  background-color: #dfe2ff;
+  color: #1a237e;
 }
 
-.active-link {
-    text-decoration: none;
-    color: #000;
+/* Scroll behavior if project list grows */
+.projects-list {
+  max-height: 50vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c5cae9 transparent;
 }
 
-.active-link li{
-    margin-bottom: 2px;
-    padding: 5px;
-    border-radius: 6px;
-    list-style: none;
-    color: #000;
-    background-color: #c7c7c7;
+.projects-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.projects-list::-webkit-scrollbar-thumb {
+  background-color: #c5cae9;
+  border-radius: 10px;
+}
+
+.add-project-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+.add-project-input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.add-project-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: #8892F6;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-project-btn:hover {
+  background-color: #6f7be5;
 }

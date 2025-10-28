@@ -1,18 +1,16 @@
-import React from 'react'
-import './Card.css'
-function Card(props){
-    return(
-        <div className='card'>
-            <div className="card--cotent">
-                <div className="card--header">
-                    <p className='card--type'>{props.tag}</p>
-                </div>
-                <h1 className='card--title'>{props.title}</h1>
-                <p className='card--description'>{props.description}</p>
-                <p className="card--deadline">Complete by: <span className='card--deadline--date'>{props.deadline}</span></p>
-            </div>
-        </ div>
-    )
-}
+import React from "react";
+import "./Card.css";
 
-export default Card
+export default function Card({ tag, title, description, dueDate }) {
+  return (
+    <div className="card">
+      <div className="card--type">{tag}</div>
+      <div className="card--title">{title}</div>
+      <div className="card--description">{description}</div>
+      <div className="card--deadline">
+        Deadline:
+        <span className="card--deadline--date">{dueDate}</span>
+      </div>
+    </div>
+  );
+}
