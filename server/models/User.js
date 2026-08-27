@@ -1,34 +1,22 @@
-const mongoose = require('mongoose');
-const Schema =  mongoose.Schema;
+const {query} = require('../config/db');
 
-const userSchema = new Schema ({
-    username:{
-        type: String,
-        required: true,
-        unique: true
-    },
-    // firstName: {
-    //     type: String,
-    //     required: true
-    // },
-    // lastName: {
-    //     type: String,
-    //     required: true
-    // },
-    email:{
-        type: String,
-        required: true,
-        unique: true
-    },
-    password:{
-        type: String,
-        required: true
-    },
-    createdAt:{
-        type: Date,
-        default: Date.now //Check the functioning
-    },
-    refreshToken: String
-})
 
-module.exports = mongoose.model('User', userSchema);
+async function buildSchemaUsers() {
+    const queryText = `CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        google_id VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        first_name VARCHAR(255) NOT NULL,
+        last_name VARCHAR(255) NOT NULL,
+        refresh_token TEXT
+    )`;
+    try {
+        const res = await query(queryText);
+        console.log('Users table created successfully', res);
+    }
+    catch (err) {
+        console.error('Error creating users table:', err);
+    }
+}
+
+module.exports = { buildSchemaUsers};
