@@ -28,6 +28,7 @@ const handleOAuthLogin = async (req, res) => {
         let user = result.rows[0];
 
         if( !user) {
+            newUser = true;
             queryText = `INSERT INTO users (
                 google_id,
                 email,
@@ -35,10 +36,29 @@ const handleOAuthLogin = async (req, res) => {
                 last_name)
                 VALUES ($1, $2, $3, $4) RETURNING *`;
             result = await query(queryText, [googleId, email, firstName, lastName]);
-            user = result.rows[0];            
-        }
+            user = result.rows[0];
+            
+            try{
+                queryText = `INSERT INTO projects 
+                        (name) VALUES($1) RETURNING *`;
 
-        res.status(200).json({ message: 'User authenticated successfully', user });
+                result = await query(queryText, ['Your Projects']);
+                let project = result.rows[0];
+                const projectId = project.id;
+                console.log(projectId);
+
+                queryText = `INSERT INTO project_members (
+                        project_id,
+                        user_id)
+                        VALUES ($1, $2) RETURNING *`;
+                
+                result = await query(queryText, [projectId, user.id]);
+                let members = result.rows[0];
+                console.log(members);
+            } catch(err){
+                console.log('Error in creating projects', err);
+            }
+        }
 
         const userId = user.id;     
         const {accessToken, refreshToken} = await createJWT(userId, email);

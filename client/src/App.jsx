@@ -2,32 +2,26 @@ import { useState, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import Login from "./components/Login.jsx";
-import NavBar from "./components/NavBar.jsx";
-import MainContent from "./components/MainContent.jsx";
+import Dashboard from "./components/Dashboard.jsx";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { createContext} from 'react';
+import { TooltipProvider } from "@/components/ui/tooltip";
+export const AuthContext = createContext();
+
 
 function App() {
   const [projects, setProjects] = useState([]);
   const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const clientId = import.meta.env.VITE_CLIENT_ID;
 
   // ✅ Login handler
-  const handleLogin = async ({ user, pwd }) => {
-    try {
-      const res = await fetch("http://localhost:2300/auth", {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ user, pwd }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Login Failed");
-
-      setToken(data.accessToken);
-    } catch (err) {
-      console.log(err.message);
-      alert(err.message);
-    }
-  };
+  const handleLogin = (newToken, newUser)=>{
+    setToken(newToken);
+    setUser(newUser);
+    localStorage.setItem('accessToken', newToken);
+  }
 
   // ✅ Fetch projects (reusable function)
   const fetchProjects = async () => {
@@ -46,32 +40,27 @@ function App() {
     }
   };
 
-  // ✅ Fetch projects when token changes (after login)
-  useEffect(() => {
-    if (token) fetchProjects();
-  }, [token]);
+  // // ✅ Fetch projects when token changes (after login)
+  // useEffect(() => {
+  //   if (token) fetchProjects();
+  // }, [token]);
 
   return (
-    <BrowserRouter>
-      <div className="App">
-        {!token ? (
-          <Login onLogin={handleLogin} />
-        ) : (
-          <>
-            <NavBar
-              projects={projects}
-              onProjectSelect={setSelectedProjectId}
-              onProjectAdded={fetchProjects} // ✅ Added this for reloading after new project
-              token={token} // ✅ Optional but useful for POST requests from NavBar
-            />
-            <MainContent
-              selectedProjectId={selectedProjectId}
-              token={token}
-            />
-          </>
-        )}
-      </div>
-    </BrowserRouter>
+    <TooltipProvider>
+      <GoogleOAuthProvider clientId={clientId}>
+        <AuthContext value = {{token, user}}>
+          <BrowserRouter>
+            <div className="App">
+              {!token ? (
+                <Login token={token} onClick={handleLogin} />
+              ) : (
+                  <Dashboard />
+              )}
+            </div>
+          </BrowserRouter>
+        </AuthContext>
+      </GoogleOAuthProvider>
+    </TooltipProvider>
   );
 }
 

@@ -4,9 +4,10 @@ const app = express();
 const {query} = require('./config/db');
 const {buildSchema} = require('./models/index.js');
 const  login = require('./routes/login.js');
+const projects = require('./routes/projectsRoutes.js');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-//const verifyJWT = require('./middleware/verifyJWT');
+const verifyJWT = require('./middleware/verifyJWT');
 
 //Working with DB
 //const mongoose = require('mongoose');
@@ -24,15 +25,15 @@ app.use(cookieParser());
 app.use(cors());
 
 
-//Routes
+//Public Routes
 app.use('/login', login); //User Login Route
 // app.use('/register', require('./routes/register')); //User Registration Route
 // app.use('/refreshToken', require('./routes/refresh')); //Generate access token when Expired
 // app.use('/logout', require('./routes/logout')); //Logout Route
 
-//app.use(verifyJWT); //Checks user authentication after every request made below
-
-// app.use('/Home', require('./routes/projectsRoutes')); //Build the list of projects user is related to
+app.use(verifyJWT); //Checks user authentication after every request made below
+//Protected Routes
+app.use('/projects', projects); //Build the list of projects user is related to
 // //Create PUT routes --WITH FRONTEND --
 // app.use('/Home/Task', require('./routes/taskRoutes'));
 

@@ -4,25 +4,23 @@ const Task = require('../models/Task');
 
 const getAllProject = async (req, res) => {
     try {
-        const foundUser = await User.findOne({ username: req.user }).exec();
-        if (!foundUser) return res.sendStatus(401); //Unauthorized
+        const { userId } = req.user;
+        console.log('User ID:', userId); //Remove Debugger
+        
+        let queryText = `SELECT p.* FROM PROJECTS p
+                JOIN project_members pm ON project_id = p.id
+                WHERE user_id = $1`;
 
-        const userId = foundUser._id;
+        const result = await query(queryText, [userId]);
+        console.log('Result:'. result); //Another Debugger
 
-        const projects = await Project.find({
-            $or: [
-                {owner: userId},
-                {members: userId}
-            ]
-        }).exec(); //can use lean
-
-        if(projects.length === 0) return res.status(204).json({message: "No projects created"});
-        res.json(projects)
+        return res.status(200).json({projects: result.rows});
     }
     catch (err) {
-        res.status(500).json( {message : err.message});
+        console.error('Error fetching projects:', err);
+        res.status(500).json({message: 'Internal Server Error'});
     }
-}
+};
 
 const createNewProject = async (req, res) => {
     const { title, members = []} = req.body;

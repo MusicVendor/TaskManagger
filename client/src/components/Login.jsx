@@ -1,61 +1,52 @@
 import React, { useState } from "react";
 import "./Login.css";
+import { GoogleLogin } from '@react-oauth/google';
 
-function Login({ onLogin }) {
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
+function Login({token,  onClick }) {
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSignIn = async (credentialResponse) => {
+    const googleToken = credentialResponse.credential;
     
-    // For now just mock login success
-    console.log("Password:", pwd);
+    try{
+      const res = await fetch('http://localhost:2300/login/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: googleToken }),
+      });
 
-    // Tell App.jsx that user has logged in
-    onLogin({ user, pwd });
+      if(!res.ok){
+        throw new Error('Google login failed');
+      }
+      
+      const data = await res.json();
+      onClick(data.accessToken, data.user);
+    } 
+    catch (err){
+      console.error("Error during sign-in", err);
+    }    
   };
 
+  // const signOut = () => {
+  //   var auth2 = gapi.auth2.getAuthInstance();
+  //   auth2.signOut().then(function () {
+  //     console.log('User signed out.');
+  //   });
+  // } 
   return (
-    <div className="background">
-      <div className="form">
-        <h1 className="form-head">Welcome Back</h1>
-        <p>Please enter the details</p>
+    <div className='m-auto mt-70 h-px 50'>
+      <h1 className="px-8 py-4 text-xl font-medium">Sign in using Google</h1>
+    <GoogleLogin
+      onSuccess={handleSignIn}
+      onError={() => {
+        console.log('Login Failed');
+      }}
+      theme="outline"
+      size="large"
+      width="280"
+      shape="rectangular"
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          {/*User Name */}
-          <div className="login-form-element">
-            <label>Username: </label>
-            <input
-              className="element-input"
-              type="userName"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
-              placeholder="Enter your userName"
-              required
-            />
-          </div>
-
-          {/* Password */}
-          <div className="login-form-element">
-            <label>Password: </label>
-            <input
-              className="element-input"
-              type="password"
-              value={pwd}
-              onChange={(e) => setPwd(e.target.value)}
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-
-          {/* Button */}
-          <div className="login-form-element">
-            <button className="element-button" type="submit">
-              Login
-            </button>
-          </div>
-        </form>
-      </div>
+    />
+    {/* <a href="#" onclick="signOut();">Sign out</a> Use it to add SignOut option*/} 
     </div>
   );
 }
