@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import "./Login.css";
 import { GoogleLogin } from '@react-oauth/google';
 
-function Login({token,  onClick }) {
+function Login({onClick }) {
 
   const handleSignIn = async (credentialResponse) => {
     const googleToken = credentialResponse.credential;

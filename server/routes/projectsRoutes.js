@@ -5,8 +5,11 @@ const projectController = require('../controller/projectController');
 router.route('/')
     .get(projectController.getAllProject)
     .post(projectController.createNewProject);
-    
-router.delete('/:projectId',projectController.deleteProject);
+
+//ADD Update and Delete Routes    
+router.route('/:projectId')
+    .patch(projectController.editProject)
+    .delete(projectController.deleteProject);
     
 
 module.exports = router;

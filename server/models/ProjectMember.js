@@ -2,7 +2,7 @@ const {query} = require('../config/db');
 
 async function buildSchemaProjectMembers() {
     const queryText = `CREATE TABLE IF NOT EXISTS project_members(
-        project_id INT REFERENCES projects(id),
+        project_id INT REFERENCES projects(id) ON DELETE CASCADE,
         user_id INT REFERENCES users(id)
     )`;
 

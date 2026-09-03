@@ -5,6 +5,7 @@ const {query} = require('./config/db');
 const {buildSchema} = require('./models/index.js');
 const  login = require('./routes/login.js');
 const projects = require('./routes/projectsRoutes.js');
+const tasks = require('./routes/taskRoutes.js');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const verifyJWT = require('./middleware/verifyJWT');
@@ -19,11 +20,16 @@ const PORT = process.env.PORT || 0
 //connectDB();
 
 //built-in middleware
-//app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
+app.use((req, res, next) => {
+  console.log("Incoming Method:", req.method, req.url);
+  console.log("Incoming Content-Type:", req.headers['content-type']);
+  next();
+});
 
 //Public Routes
 app.use('/login', login); //User Login Route
@@ -33,18 +39,11 @@ app.use('/login', login); //User Login Route
 
 app.use(verifyJWT); //Checks user authentication after every request made below
 //Protected Routes
-app.use('/projects', projects); //Build the list of projects user is related to
-// //Create PUT routes --WITH FRONTEND --
-// app.use('/Home/Task', require('./routes/taskRoutes'));
-
-
-
-
-// mongoose.connection.once('open', () => {
-//     console.log('Connected to MongoDB');
-//     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-// });
-
+app.use('/projects', projects);
+app.use('/edit/project', projects);
+app.use('/delete/project', projects);
+app.use('/tasks', tasks);
+app.use('/status/tasks', tasks);
 
 
 app.listen(PORT, async () =>{

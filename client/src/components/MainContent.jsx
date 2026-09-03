@@ -1,80 +1,66 @@
-import React, { useEffect, useState, useCallback } from "react";
-import TaskColumn from "./TaskColumn";
-import "./MainContent.css";
+import TaskColumn from './TaskColumn';
+import { useEffect, useContext, useState } from 'react';
+import { useProjectContext } from './ProjectContext';
 
-function MainContent({ selectedProjectId, token }) {
-  const [tasks, setTasks] = useState({
-    todo: [],
-    inProgress: [],
-    completed: [],
-  });
+function MainContent() {
+  const { selectedProjectId } = useProjectContext();
+  const [tasks, setTasks] = useState([]);
 
-  // ✅ Fetch tasks function (reusable by TaskColumn)
-  const fetchTasks = useCallback(async () => {
+  const fetchTasks = async () => {
     if (!selectedProjectId) return;
-
+    
     try {
-      const res = await fetch(
-        `http://localhost:2300/Home/Task/${selectedProjectId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch(`http://localhost:2300/tasks/${selectedProjectId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+      });
 
-      if (!res.ok) throw new Error("Failed to fetch tasks");
       const data = await res.json();
+      setTasks(data);
 
-      // Normalize and group by status
-      const grouped = {
-        todo: data.filter((t) => t.status.toLowerCase() === "to-do"),
-        inProgress: data.filter((t) => t.status.toLowerCase() === "in-progress"),
-        completed: data.filter((t) => t.status.toLowerCase() === "completed"),
-      };
-
-      setTasks(grouped);
-    } catch (err) {
-      console.error("Error fetching tasks:", err);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
     }
-  }, [selectedProjectId, token]);
+  }
 
-  // ✅ Fetch tasks when project or token changes
+  const handleStatusChange = (updatedTask)=> {
+    setTasks(prevTasks =>
+        prevTasks.map(task => task.id == updatedTask.id ? updatedTask : task)
+    );
+  };
+
   useEffect(() => {
     fetchTasks();
-  }, [fetchTasks]);
+  }, [selectedProjectId]);
 
   return (
-    <div className="main">
-      <div className="main--header">
-        <h2>Project Tasks</h2>
-      </div>
-      <div className="main--progress">
-        <TaskColumn
-          status="To Do"
-          task={tasks.todo}
-          projectId={selectedProjectId}
-          token={token}
-          onTaskAdded={fetchTasks}
-        />
-        <TaskColumn
-          status="In Progress"
-          task={tasks.inProgress}
-          projectId={selectedProjectId}
-          token={token}
-          onTaskAdded={fetchTasks}
-        />
-        <TaskColumn
-          status="Completed"
-          task={tasks.completed}
-          projectId={selectedProjectId}
-          token={token}
-          onTaskAdded={fetchTasks}
-        />
-      </div>
-    </div>
+    <>
+      {selectedProjectId ? (
+      <div className='mx-25'>
+        <div className="main--header">
+          <h2 className='ml-8 mb-4 font-semibold'>Project Tasks</h2>
+        </div>
+        <div className="flex justify-around gap-6">
+          <div className='w-full'>
+            <h4 className='mb-8 font-semibold text-sm'>To Do</h4>
+            <TaskColumn status='to-do' tasks={tasks} onStatusChange ={handleStatusChange} className='flex flex-col gap-4'/>
+            </div>
+          <div className='w-full'>
+            <h4 className='mb-8 font-semibold text-sm'>In Progress</h4>
+            <TaskColumn status='in-progress' tasks={tasks} onStatusChange ={handleStatusChange} className='flex flex-col gap-4'/>
+          </div>
+          <div className='w-full'>
+            <h4 className='mb-8 font-semibold text-sm'>Completed</h4>
+            <TaskColumn status='completed' tasks={tasks} onStatusChange ={handleStatusChange} className='flex flex-col gap-4'/>
+          </div>
+        </div>
+      </div>) : (
+        <div className="flex justify-center items-center h-full">
+          <h2 className='text-2xl font-semibold'>Select a project to view tasks</h2>
+        </div>
+      )
+      }
+    </>
   );
 }
 

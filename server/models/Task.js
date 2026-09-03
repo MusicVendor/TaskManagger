@@ -8,8 +8,9 @@ async function buildSchemaTasks() {
         END $$;
         CREATE TABLE IF NOT EXISTS tasks(
         id SERIAL PRIMARY KEY,
+        created_by INT REFERENCES users(id),
         project_id INT REFERENCES projects(id),
-        user_assigned INT REFERENCES users(id),
+        user_assigned INT[] DEFAULT '{}',
         task_name VARCHAR(255) NOT NULL,
         task_description TEXT,
         task_status status DEFAULT 'to-do',

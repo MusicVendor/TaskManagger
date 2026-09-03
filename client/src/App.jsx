@@ -1,19 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import Login from "./components/Login.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { createContext} from 'react';
 import { TooltipProvider } from "@/components/ui/tooltip";
 export const AuthContext = createContext();
 
 
 function App() {
-  const [projects, setProjects] = useState([]);
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
   const clientId = import.meta.env.VITE_CLIENT_ID;
 
   // ✅ Login handler
@@ -40,11 +37,6 @@ function App() {
     }
   };
 
-  // // ✅ Fetch projects when token changes (after login)
-  // useEffect(() => {
-  //   if (token) fetchProjects();
-  // }, [token]);
-
   return (
     <TooltipProvider>
       <GoogleOAuthProvider clientId={clientId}>
@@ -52,7 +44,7 @@ function App() {
           <BrowserRouter>
             <div className="App">
               {!token ? (
-                <Login token={token} onClick={handleLogin} />
+                <Login onClick={handleLogin} />
               ) : (
                   <Dashboard />
               )}

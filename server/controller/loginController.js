@@ -45,7 +45,7 @@ const handleOAuthLogin = async (req, res) => {
                 result = await query(queryText, ['Your Projects']);
                 let project = result.rows[0];
                 const projectId = project.id;
-                console.log(projectId);
+                //console.log(projectId);
 
                 queryText = `INSERT INTO project_members (
                         project_id,
@@ -53,8 +53,35 @@ const handleOAuthLogin = async (req, res) => {
                         VALUES ($1, $2) RETURNING *`;
                 
                 result = await query(queryText, [projectId, user.id]);
-                let members = result.rows[0];
-                console.log(members);
+                //let members = result.rows[0];
+                //console.log(members);
+
+                queryText = `INSERT INTO tasks (
+                        created_by,
+                        project_id,
+                        user_assigned,
+                        task_name,
+                        task_description,
+                        task_status,
+                        end_date)
+                        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+                
+                result = await query(queryText, [user.id, projectId, [user.id], 'Welcome to Task Manager', 'This is your first task. You can edit or delete it.', 'to-do', '2024-12-31']);
+                let task = result.rows[0];
+                console.log('Task created:', task);
+
+                result = await query(queryText, [user.id, projectId, [user.id], 'Grocery Shopping', 'Buy groceries for the week.', 'completed', '2024-12-31']);
+                task = result.rows[0];
+                console.log('Task created:', task);
+
+                result = await query(queryText, [user.id, projectId, [user.id], 'Take Tom for a walk', 'Evening walk with Tom.', 'in-progress', '2024-12-31']);
+                task = result.rows[0];
+                console.log('Task created:', task);
+
+                result = await query(queryText, [user.id, projectId, [user.id], 'Send the mail', 'Send the email to the client.', 'in-progress', '2024-12-31']);
+                task = result.rows[0];
+                console.log('Task created:', task);
+
             } catch(err){
                 console.log('Error in creating projects', err);
             }

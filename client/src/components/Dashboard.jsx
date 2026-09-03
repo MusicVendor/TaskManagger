@@ -1,13 +1,14 @@
-import NavBar from "./NavBar";
-//import MainContent from "./MainContent";
+import Layout from './layout';
+import MainContent from "./MainContent";
+import React from 'react';
 
 function Dashboard(){
 
 
     return(
-        <>
-            <NavBar />
-        </>
+            <Layout>
+                <MainContent />
+            </Layout>
     )
 }
 

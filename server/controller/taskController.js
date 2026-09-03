@@ -1,17 +1,22 @@
-const User = require('../models/User');
-const Task = require('../models/Task');
+const {query} = require('../config/db');
 
-const getAllTask = async (req, res) => {
+const getTask = async (req, res) => {
     const {projectId} = req.params;
+    const {userId} = req.user;
     if(!projectId) return res.status(400).json({message: "Project ID required"});
 
     try{
-        const task = await Task.find({project: projectId}).exec(); //.populate??
+       let queryText = `SELECT * FROM tasks 
+            WHERE project_id = $1
+            AND user_assigned @> ARRAY[$2]::int[]`;
+        
+        const result = await query(queryText, [projectId, userId]);
+        const data = result.rows;
 
-        res.status(200).json(task);
+        res.status(200).json(data);
     }
     catch(err){
-        res.status(500).json({messgae: err.message});
+        res.status(500).json({message: err.message});
     }
 }
 
@@ -78,8 +83,33 @@ const deleteTask = async (req, res) => {
     }
 }
 
+const updateTaskStatus = async (req, res) => {
+    console.log('Body', req.body);
+    const { taskId } = req.params;
+    const { task_status } = req.body;
+
+    if(!taskId) return res.status(400).json({message: "Task ID required"});
+    if(!task_status) return res.status(400).json({message: "Task status required"});
+
+    try {
+        let queryText = `UPDATE tasks 
+            SET task_status = $1 
+            WHERE id = $2 RETURNING *`;
+        
+            const result = await query(queryText, [task_status, taskId]);
+            const updatedTask = result.rows[0];
+
+            if(!updatedTask) return res.status(404).json({message: "No task found"});
+            return res.status(200).json(updatedTask);
+    }
+    catch (err){
+        res.status(500).json({message: err.message});
+    }
+}
+
 module.exports = { 
-    getAllTask,
+    getTask,
     createNewTask,
-    deleteTask
+    deleteTask,
+    updateTaskStatus
 };
