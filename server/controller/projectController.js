@@ -3,19 +3,16 @@ const {query} = require('../config/db');
 const getAllProject = async (req, res) => {
     try {
         const { userId } = req.user;
-        console.log('User ID:', userId); //Remove Debugger
         
         let queryText = `SELECT p.* FROM PROJECTS p
                 JOIN project_members pm ON project_id = p.id
                 WHERE user_id = $1`;
 
         const result = await query(queryText, [userId]);
-        console.log('Result:'. result); //Another Debugger
 
         return res.status(200).json({projects: result.rows});
     }
     catch (err) {
-        console.error('Error fetching projects:', err);
         res.status(500).json({message: 'Internal Server Error'});
     }
 };
@@ -92,9 +89,60 @@ const deleteProject = async (req, res) => {
     }
 }
 
+const getMembers = async (req, res) => {
+    const {projectId} = req.params;
+    console.log(projectId); //DEBUGGER
+    if(!projectId) return res.status(400).json({message: "Project Id required"});
+
+    try{        
+        let queryText = `SELECT email FROM users
+            WHERE id IN (SELECT user_id FROM project_members 
+            WHERE project_id = $1)`;
+
+        const result =  await query(queryText, [projectId]);
+        console.log(result);
+        if(result.rows.length === 0) return res.status(404).json({message: "Failed to fetch members"});
+
+        return res.status(200).json({members : result.rows});
+    } catch(err){
+        res.status(500).json(err.message);
+    }
+}
+
+const addMembers = async (req, res) => {
+    const {projectId} = req.params;
+    const {email} = req.body;
+
+    if(!projectId || !email) return res.status(404).json({message: "Email id required"});
+
+    try{
+        let queryText = `SELECT id FROM
+            users WHERE email = $1`;
+
+        let result = await query(queryText, [email]);
+        if(result.rows.length === 0){
+            return res.status(404).json({message: "User with email is not registered"});
+        }
+        const userId = result.rows[0].id;
+
+        queryText = `INSERT INTO project_members (
+            project_id,
+            user_id) VALUES ($1, $2)`
+            
+        result = await query(queryText, [projectId, userId]);
+        
+        return res.status(201).json("New member added successfully!");
+        
+    } catch(err){
+        res.status(500).json({message: err.message});
+    }
+}
+
 module.exports = {
     getAllProject,
     createNewProject,
     editProject,
-    deleteProject
+    deleteProject,
+    getMembers,
+    addMembers
 };

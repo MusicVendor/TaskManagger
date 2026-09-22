@@ -22,42 +22,34 @@ const getTask = async (req, res) => {
 
 const createNewTask = async (req, res) => {
     const { projectId } = req.params;
+    const {userId} = req.user;
     if(!projectId) return res.status(400).json({message: "Project ID required"});
 
-    try {
-        const foundUser = await User.findOne({username: req.user}).exec();
-        if(!foundUser) return res.sendStatus(401); //Unauthorized
+    try{
+        const {task_name, task_description, task_status = 'to-do'} = req.body
+        const dummyDate = new Date();
+        const formattedDate = dummyDate.toISOString().split('T')[0];
+        const user_assigned = [userId];
 
-        const ownerId = foundUser._id;
-        
-        let { title, description, tag, assignedTo = [], status, dueDate } = req.body;
+        let queryText = `INSERT INTO tasks (
+            created_by,
+            project_id,
+            user_assigned,
+            task_name,
+            task_description,
+            task_status,
+            created_at,
+            updated_at,
+            end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
 
-        if(!title) title = "New Task";
-        const trimmedTitle = title.trim();
+        const result = await query(queryText, [userId, projectId, user_assigned, task_name, task_description, task_status, formattedDate, formattedDate, formattedDate]);
+        const newTask = result.rows[0];
 
-        if(!description) description = "New task created";
+        res.status(201).json(newTask);
 
-        if(!status) status = "to-do";
-
-        if(!tag) return res.status(400).json({message: "Task tag required"});
-
-        const task = new Task ({
-            title: trimmedTitle,
-            description: description,
-            tag: tag,
-            createdBy: ownerId,
-            assignedTo,
-            status: status,
-            project: projectId,
-            dueDate: dueDate
-        });
-
-        const savedTask = await task.save();
-        res.status(201).json(savedTask);
-        
-    }
-    catch (err){
-        return res.status(500).json({message: err.message});
+    }catch(err){
+        console.log("Failed to create new Task:", err);
+        res.status(500).json({ message: "Internal server error" });
     }
 }
 
@@ -65,20 +57,18 @@ const deleteTask = async (req, res) => {
     const { taskId } = req.params;
     if(!taskId) return res.status(400).json({message: "Task ID required"});
 
-    try {
-        const foundUser = await User.findOne({username: req.user}).exec();
-        if(!foundUser) return res.sendStatus(401);
+    try{
+        let queryText = `DELETE FROM tasks
+            WHERE id = $1 RETURNING *`
 
-        const task = await Task.findById(taskId).exec();
-        if(!task) return res.status(404).json({message: "No task found"});
+        const result = await query(queryText, [taskId]);
 
-        if(!task.createdBy.equals(foundUser._id)) return res.status(403).json({message: "You have no rights to delete"});
+        if(result.rows.length === 0) {
+            return res.status(404).json({message: "Failed to delete task"});
+        }
 
-        await Task.deleteOne({_id: taskId});
-
-        return res.status(200).json({message: 'Task deleted successfully'});
-    }
-    catch (err){
+        return res.status(200).json({message: "task deleted successfully"});
+    } catch(err){
         res.status(500).json({message: err.message});
     }
 }

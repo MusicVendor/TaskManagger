@@ -9,7 +9,7 @@ async function buildSchemaTasks() {
         CREATE TABLE IF NOT EXISTS tasks(
         id SERIAL PRIMARY KEY,
         created_by INT REFERENCES users(id),
-        project_id INT REFERENCES projects(id),
+        project_id INT REFERENCES projects(id) ON DELETE CASCADE,
         user_assigned INT[] DEFAULT '{}',
         task_name VARCHAR(255) NOT NULL,
         task_description TEXT,

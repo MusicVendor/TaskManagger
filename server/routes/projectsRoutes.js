@@ -10,6 +10,9 @@ router.route('/')
 router.route('/:projectId')
     .patch(projectController.editProject)
     .delete(projectController.deleteProject);
-    
+
+router.route('/:projectId/members')
+    .get(projectController.getMembers)
+    .post(projectController.addMembers);
 
 module.exports = router;

@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const {query} = require('./config/db');
-const {buildSchema} = require('./models/index.js');
+const {buildSchema} = require('./models/Index.js');
 const  login = require('./routes/login.js');
 const projects = require('./routes/projectsRoutes.js');
 const tasks = require('./routes/taskRoutes.js');
@@ -42,8 +42,10 @@ app.use(verifyJWT); //Checks user authentication after every request made below
 app.use('/projects', projects);
 app.use('/edit/project', projects);
 app.use('/delete/project', projects);
+app.use('/create/project', projects);
 app.use('/tasks', tasks);
 app.use('/status/tasks', tasks);
+app.use('/delete/task', tasks);
 
 
 app.listen(PORT, async () =>{
