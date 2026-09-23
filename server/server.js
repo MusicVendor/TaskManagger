@@ -1,6 +1,9 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
+const {Server} = require('socket.io');
 const app = express();
+const server = http.createServer(app);
 const {query} = require('./config/db');
 const {buildSchema} = require('./models/Index.js');
 const  login = require('./routes/login.js');
@@ -25,9 +28,22 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
+//Socket IO configurations
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+  }
+});
+
 app.use((req, res, next) => {
   console.log("Incoming Method:", req.method, req.url);
   console.log("Incoming Content-Type:", req.headers['content-type']);
+  next();
+});
+
+app.use((req, res, next) => {
+  req.io = io;
   next();
 });
 
@@ -48,7 +64,25 @@ app.use('/status/tasks', tasks);
 app.use('/delete/task', tasks);
 
 
-app.listen(PORT, async () =>{
+io.on("connection", (socket) => {
+  console.log("User connected", socket.id);
+
+  socket.on("join_project", (projectId) => {
+    socket.join(`project_${projectId}`);
+    console.log(`Socket Id:${socket.id} join the project room: ${projectId}`);
+  });
+
+  socket.on("leave_project", (projectId) => {
+    socket.leave(`project_${projectId}`);
+    console.log(`Socket Id:${socket.id} left the project room:${projectId}`);
+  });
+
+  socket.on("disconnect", () =>{
+    console.log("User disconnected:", socket.id);
+  });
+});
+
+server.listen(PORT, async () =>{
   try {
     await buildSchema();
     console.log(`Server running on port ${PORT}`);

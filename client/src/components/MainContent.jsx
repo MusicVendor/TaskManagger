@@ -1,5 +1,6 @@
 import TaskColumn from './TaskColumn';
 import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 import { useProjectContext } from './ProjectContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+// Initialize socket instance outside component to avoid reconnects on re-render
+const socket = io("http://localhost:2300", {
+  autoConnect: true,
+});
 
 function MainContent() {
   const { selectedProjectId } = useProjectContext();
@@ -44,7 +50,8 @@ function MainContent() {
         method: "GET",
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}` },
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
+        },
       });
 
       const data = await res.json();
@@ -65,7 +72,8 @@ function MainContent() {
         method: "GET",
         headers: {
           'Content-Type' : 'application/json', 
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}` },
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
+        },
       });
 
       if (!res.ok) throw new Error("Failed to fetch project members");
@@ -153,7 +161,13 @@ function MainContent() {
       if (!res.ok) throw new Error("Failed to create task");
 
       const createdTask = await res.json();
-      setTasks(prevTasks => [...prevTasks, createdTask.task || createdTask]);
+      const finalTask = createdTask.task || createdTask;
+      
+      // Update local state immediately for the creator
+      setTasks(prevTasks => {
+        if (prevTasks.some(t => t.id === finalTask.id)) return prevTasks;
+        return [...prevTasks, finalTask];
+      });
 
       resetForm();
       setIsAddTaskOpen(false);
@@ -175,8 +189,49 @@ function MainContent() {
     );
   };
 
+  // 1. Initial HTTP Data Fetching
   useEffect(() => {
     fetchTasks();
+  }, [selectedProjectId]);
+
+  // 2. Real-Time WebSockets Integration
+  useEffect(() => {
+    if (!selectedProjectId) return;
+
+    // Join current project room
+    socket.emit("join_project", selectedProjectId);
+
+    // Listen for real-time task additions from collaborators
+    socket.on("task_created", (newTask) => {
+      setTasks(prevTasks => {
+        if (prevTasks.some(task => task.id === newTask.id)) return prevTasks;
+        return [...prevTasks, newTask];
+      });
+    });
+
+    // Listen for real-time task status / detail updates
+    socket.on("task_updated", (updatedTask) => {
+      setTasks(prevTasks =>
+        prevTasks.map(task => 
+          String(task.id) === String(updatedTask.id) ? updatedTask : task
+        )
+      );
+    });
+
+    // Listen for real-time task deletions
+    socket.on("task_deleted", (deletedTaskId) => {
+      setTasks((prevTasks) => 
+        prevTasks.filter((task) => String(task.id) !== String(deletedTaskId))
+      );
+    });
+
+    // Cleanup listeners and leave room when switching projects or unmounting
+    return () => {
+      socket.emit("leave_project", selectedProjectId);
+      socket.off("task_created");
+      socket.off("task_updated");
+      socket.off("task_deleted");
+    };
   }, [selectedProjectId]);
 
   const handleOpenMembersModal = () => {
