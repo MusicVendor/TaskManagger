@@ -47,6 +47,16 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/health', async (req, res) => {
+  try {
+    await query('SELECT 1');
+    res.status(200).json({ status: 'ok', database: 'connected' });
+  } catch (err) {
+    console.error('Health check failed:', err);
+    res.status(503).json({ status: 'unhealthy', database: 'disconnected' });
+  }
+});
+
 //Public Routes
 app.use('/login', login); //User Login Route
 // app.use('/register', require('./routes/register')); //User Registration Route
