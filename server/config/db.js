@@ -8,19 +8,31 @@ require('dotenv').config({
   ]
 });
 
-const pool = process.env.DATABASE_URL
+const databaseUrl = process.env.DATABASE_URL?.trim();
+
+if (!databaseUrl) {
+  const missingDbVariables = ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME']
+    .filter((name) => !process.env[name]);
+
+  if (missingDbVariables.length > 0) {
+    console.error(
+      `Database configuration missing: set DATABASE_URL or ${missingDbVariables.join(', ')}`
+    );
+  }
+}
+
+const pool = databaseUrl
   ? new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production'
-        ? { rejectUnauthorized: true }
-        : true
+      connectionString: databaseUrl,
+      connectionTimeoutMillis: 10000
     })
   : new Pool({
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME
+      database: process.env.DB_NAME,
+      connectionTimeoutMillis: 10000
     });
 
 pool.on('error', (err) => {

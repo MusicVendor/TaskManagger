@@ -52,7 +52,10 @@ app.get('/health', async (req, res) => {
     await query('SELECT 1');
     res.status(200).json({ status: 'ok', database: 'connected' });
   } catch (err) {
-    console.error('Health check failed:', err);
+    console.error('Health check failed:', {
+      code: err.code,
+      message: err.message
+    });
     res.status(503).json({ status: 'unhealthy', database: 'disconnected' });
   }
 });
