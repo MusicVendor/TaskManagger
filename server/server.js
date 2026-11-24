@@ -18,6 +18,21 @@ const verifyJWT = require('./middleware/verifyJWT');
 //const connectDB = require('./config/connectDB');
 //const { verify } = require('jsonwebtoken');
 const PORT = process.env.PORT || 0
+const clientOrigin = (process.env.CLIENT_ORIGIN || 'https://task-managger.vercel.app')
+  .replace(/\/$/, '');
+const allowedOrigins = new Set([clientOrigin]);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.has(origin.replace(/\/$/, ''))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
+};
 
 //Connecting with DB
 //connectDB();
@@ -26,13 +41,20 @@ const PORT = process.env.PORT || 0
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors(corsOptions));
 
 //Socket IO configurations
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST']
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin.replace(/\/$/, ''))) {
+        callback(null, true);
+      } else {
+        callback(new Error('Origin not allowed by Socket.IO'));
+      }
+    },
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
