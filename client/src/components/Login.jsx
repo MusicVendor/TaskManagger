@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { GoogleLogin } from '@react-oauth/google';
 
 function Login({onClick }) {
