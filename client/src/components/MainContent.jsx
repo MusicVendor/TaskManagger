@@ -15,9 +15,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { API_URL } from "../api";
 
 // Initialize socket instance outside component to avoid reconnects on re-render
-const socket = io("http://localhost:2300", {
+const socket = io(API_URL, {
   autoConnect: true,
 });
 
@@ -46,7 +47,7 @@ function MainContent() {
     if (!selectedProjectId) return;
     
     try {
-      const res = await fetch(`http://localhost:2300/tasks/${selectedProjectId}`, {
+      const res = await fetch(`${API_URL}/tasks/${selectedProjectId}`, {
         method: "GET",
         headers: { 
           'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ function MainContent() {
     setIsLoadingMembers(true);
     setMemberError('');
     try {
-      const res = await fetch(`http://localhost:2300/projects/${selectedProjectId}/members`, {
+      const res = await fetch(`${API_URL}/projects/${selectedProjectId}/members`, {
         method: "GET",
         headers: {
           'Content-Type' : 'application/json', 
@@ -97,7 +98,7 @@ function MainContent() {
     setIsAddingMember(true);
     setMemberError('');
     try {
-      const res = await fetch(`http://localhost:2300/projects/${selectedProjectId}/members`, {
+      const res = await fetch(`${API_URL}/projects/${selectedProjectId}/members`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +143,7 @@ function MainContent() {
 
     setIsCreating(true);
     try {
-      const res = await fetch(`http://localhost:2300/tasks/${selectedProjectId}`, {
+      const res = await fetch(`${API_URL}/tasks/${selectedProjectId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

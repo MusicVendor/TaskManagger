@@ -1,5 +1,6 @@
 import React from "react";
 import { GoogleLogin } from '@react-oauth/google';
+import { API_URL } from "../api";
 
 function Login({onClick }) {
 
@@ -7,7 +8,7 @@ function Login({onClick }) {
     const googleToken = credentialResponse.credential;
     
     try{
-      const res = await fetch('http://localhost:2300/login/google', {
+      const res = await fetch(`${API_URL}/login/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: googleToken }),

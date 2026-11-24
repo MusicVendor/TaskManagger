@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Trash2, Loader2 } from "lucide-react";
+import { API_URL } from "../api";
 
 function TaskColumn({ status, tasks, onStatusChange, onDeleteTask }) {
   const [deletingTaskId, setDeletingTaskId] = useState(null);
@@ -25,7 +26,7 @@ function TaskColumn({ status, tasks, onStatusChange, onDeleteTask }) {
 
   const handleMoveTask = async (taskId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:2300/status/tasks/${taskId}`, {
+      const res = await fetch(`${API_URL}/status/tasks/${taskId}`, {
         method: "PATCH",
         headers: { 
           "Content-Type": 'application/json',
@@ -50,7 +51,7 @@ function TaskColumn({ status, tasks, onStatusChange, onDeleteTask }) {
 
     setIsDeleting(true);
     try {
-      const res = await fetch(`http://localhost:2300/delete/task/${taskId}`, {
+      const res = await fetch(`${API_URL}/delete/task/${taskId}`, {
         method: "DELETE",
         headers: { 
           "Authorization": `Bearer ${localStorage.getItem('accessToken')}` 

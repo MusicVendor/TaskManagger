@@ -49,6 +49,7 @@ interface Project {
 import { useProjectContext } from "../src/components/ProjectContext";
 import { FolderKanban, Plus, MoreHorizontal, Pencil, Trash2, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"; 
+import { API_URL } from "../src/api";
 
 export function AppSidebar() {
   const { selectedProjectId, setSelectedProjectId } = useProjectContext();
@@ -69,7 +70,7 @@ export function AppSidebar() {
 
   const fetchProject = async () => {
     try {
-      const res = await fetch(`http://localhost:2300/projects`, {
+      const res = await fetch(`${API_URL}/projects`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ export function AppSidebar() {
 
     setIsCreating(true);
     try {
-      const res = await fetch(`http://localhost:2300/create/project`, {
+      const res = await fetch(`${API_URL}/create/project`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +139,7 @@ export function AppSidebar() {
     setEditingProjectId(null);
 
     try {
-      const res = await fetch(`http://localhost:2300/edit/project/${id}`, {
+      const res = await fetch(`${API_URL}/edit/project/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -173,7 +174,7 @@ export function AppSidebar() {
     
     setIsDeleting(true);
     try {
-      const res = await fetch(`http://localhost:2300/delete/project/${id}`, {
+      const res = await fetch(`${API_URL}/delete/project/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
