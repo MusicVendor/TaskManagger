@@ -39,7 +39,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { AuthContext } from "../src/App";
+import { AuthContext } from "../src/AuthContext";
 
 interface Project {
   id: number;

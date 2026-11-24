@@ -1,11 +1,11 @@
-import { useState, useEffect, createContext } from "react";
+import { useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import Login from "./components/Login.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { TooltipProvider } from "@/components/ui/tooltip";
-export const AuthContext = createContext();
+import { AuthContext } from "./AuthContext";
 
 
 function App() {
@@ -19,23 +19,6 @@ function App() {
     setUser(newUser);
     localStorage.setItem('accessToken', newToken);
   }
-
-  // ✅ Fetch projects (reusable function)
-  const fetchProjects = async () => {
-    try {
-      const res = await fetch("http://localhost:2300/Home", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("Failed to fetch projects");
-
-      const data = await res.json();
-      setProjects(data);
-    } catch (err) {
-      console.error("Error fetching projects", err);
-    }
-  };
 
   return (
     <TooltipProvider>
