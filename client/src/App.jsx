@@ -13,17 +13,22 @@ function App() {
   const [user, setUser] = useState(null);
   const clientId = import.meta.env.VITE_CLIENT_ID;
 
-  // ✅ Login handler
   const handleLogin = (newToken, newUser)=>{
     setToken(newToken);
     setUser(newUser);
     localStorage.setItem('accessToken', newToken);
   }
 
+  const handleLogout = ()=>{
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('accessToken');
+  }
+
   return (
     <TooltipProvider>
       <GoogleOAuthProvider clientId={clientId}>
-        <AuthContext value = {{token, user}}>
+        <AuthContext value = {{token, user, logout: handleLogout}}>
           <BrowserRouter>
             <div className="App">
               {!token ? (

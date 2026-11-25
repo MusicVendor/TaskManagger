@@ -47,15 +47,16 @@ interface Project {
 }
 
 import { useProjectContext } from "../src/components/ProjectContext";
-import { FolderKanban, Plus, MoreHorizontal, Pencil, Trash2, Loader2 } from "lucide-react";
+import { FolderKanban, Plus, MoreHorizontal, Pencil, Trash2, Loader2, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"; 
 import { API_URL } from "../src/api";
+import { googleLogout } from "@react-oauth/google";
 
 export function AppSidebar() {
   const { selectedProjectId, setSelectedProjectId } = useProjectContext();
   const { state } = useSidebar();
   const [projects, setProjects] = useState<Project[]>([]);
-  const { user, token } = useContext(AuthContext);
+  const { user, token, logout } = useContext(AuthContext);
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [editedName, setEditedName] = useState("");
   
@@ -67,6 +68,27 @@ export function AppSidebar() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
+    try {
+      await fetch(`${API_URL}/logout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    } catch (err) {
+      console.error("Error during logout:", err);
+    } finally {
+      googleLogout();
+      logout();
+    }
+  };
 
   const fetchProject = async () => {
     try {
@@ -362,7 +384,24 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="text-muted-foreground hover:text-red-600"
+            >
+              {isLoggingOut ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <LogOut className="h-4 w-4" />
+              )}
+              <span>{isLoggingOut ? "Signing out..." : "Log out"}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
 
       {/* Add Project Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>

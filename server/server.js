@@ -84,9 +84,9 @@ app.get('/health', async (req, res) => {
 
 //Public Routes
 app.use('/login', login); //User Login Route
+app.use('/logout', require('./routes/logout')); //Logout Route
 // app.use('/register', require('./routes/register')); //User Registration Route
 // app.use('/refreshToken', require('./routes/refresh')); //Generate access token when Expired
-// app.use('/logout', require('./routes/logout')); //Logout Route
 
 app.use(verifyJWT); //Checks user authentication after every request made below
 //Protected Routes

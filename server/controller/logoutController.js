@@ -1,23 +1,27 @@
-const User = require('../models/User');
+const {query} = require('../config/db');
 
 const handleLogout = async (req, res) => {
     const cookies = req.cookies;
-    if(!cookies?.jwt) return res.sendStatus(204); //No content
+    const cookieOptions = {
+        httpOnly: true,
+        sameSite: 'None',
+        secure: process.env.NODE_ENV === 'production'
+    };
+
+    if(!cookies?.jwt) return res.clearCookie('jwt', cookieOptions).sendStatus(204);
     const refreshToken = cookies.jwt;
 
-    const foundUser = await User.findOne({refreshToken}).exec();
-    if(!foundUser) {
-        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
-        return res.sendStatus(204);
+    try {
+        await query(
+            'UPDATE users SET refresh_token = NULL WHERE refresh_token = $1',
+            [refreshToken]
+        );
+    } catch (err) {
+        console.error('Error clearing refresh token:', err);
+        return res.clearCookie('jwt', cookieOptions).sendStatus(500);
     }
 
-    //Delete refresh token
-    foundUser.refreshToken = '';
-    const result = await foundUser.save();
-    console.log(result);
-
-    res.clearCookie('jwt', {httpOnly: true, sameSite: 'None', secure: true});
-    res.sendStatus(204);
+    res.clearCookie('jwt', cookieOptions).sendStatus(204);
 }
 
 module.exports = {handleLogout};
